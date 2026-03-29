@@ -19,8 +19,10 @@ CREATE TABLE needs (
 CREATE TABLE fulfillments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   need_id UUID NOT NULL REFERENCES needs(id) ON DELETE CASCADE,
+  references_id UUID REFERENCES fulfillments(id),
   title TEXT NOT NULL CHECK (char_length(title) <= 500),
   description TEXT CHECK (char_length(description) <= 10000),
+  status TEXT DEFAULT 'offering' CHECK (status IN ('offering', 'in_progress', 'completed', 'withdrawn')),
   metadata JSONB DEFAULT '{}',
   tags TEXT[] DEFAULT '{}',
   created_by TEXT,
