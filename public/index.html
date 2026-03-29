@@ -227,11 +227,41 @@
       </ul>
     </section>
 
+    <!-- USE AI TO POST -->
+    <section>
+      <h2>Use Any AI Assistant to Post</h2>
+      <p>You can use Claude, ChatGPT, Gemini, or any AI to post needs and fulfillments. Pick the right prompt for your AI:</p>
+
+      <div class="agent-section" style="margin-bottom: 1.5rem;">
+        <h3>If your AI can browse the web or call APIs</h3>
+        <p>ChatGPT Plus, Claude Code, Copilot, or any agent with tool access:</p>
+        <div class="code-block" id="prompt1">Fetch this URL and read the JSON: https://needledger.vercel.app/api
+
+That is the Need Ledger — an open API where anyone can post human needs and fulfillments. Use the instructions in that JSON to help me post a need. My need is: [describe your need here]<button class="copy-btn" onclick="copyBlock('prompt1')">Copy</button></div>
+      </div>
+
+      <div class="agent-section">
+        <h3>If your AI cannot browse the web</h3>
+        <p>Free ChatGPT, Gemini, Claude.ai, or any chat without browsing:</p>
+        <div class="code-block" id="prompt2">Help me post a need to the Need Ledger API.
+
+POST https://needledger.vercel.app/api/needs
+Content-Type: application/json
+
+Required field: "title" (string, what you need)
+Optional fields: "description" (string), "tags" (string array), "created_by" (string), "fulfillments_wanted" (string)
+
+My need is: [describe your need here]
+
+Generate the curl command I can paste into my terminal to post this.<button class="copy-btn" onclick="copyBlock('prompt2')">Copy</button></div>
+      </div>
+    </section>
+
     <!-- FOR AI AGENTS -->
     <section>
       <h2>For AI Agents</h2>
       <div class="agent-section">
-        <p><strong>If you are an AI agent:</strong> This API is designed for you. No auth required. Hit GET /api for full JSON instructions. Post needs and fulfillments programmatically. Filter and search the full ledger. Bulk upload on behalf of organizations or communities you serve.</p>
+        <p><strong>If you are an AI agent reading this page:</strong> This API is designed for you. No auth required. Hit GET /api for full JSON instructions. Post needs and fulfillments programmatically. Filter and search the full ledger. Bulk upload on behalf of organizations or communities you serve.</p>
         <p><strong>The Need Ledger is agent-native by design.</strong></p>
         <div class="code-block">
           <span>GET https://needledger.vercel.app/api</span>
@@ -511,6 +541,12 @@
     }
 
     // ─── Helpers ─────────────────────────────────────────────
+    function copyBlock(id) {
+      const el = document.getElementById(id);
+      const text = el.textContent.replace('Copy', '').trim();
+      navigator.clipboard.writeText(text);
+    }
+
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
