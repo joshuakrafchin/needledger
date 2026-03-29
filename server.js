@@ -103,14 +103,17 @@ app.get('/api', (req, res) => {
       },
       fields: {
         needs: ['id', 'title', 'description', 'tags', 'metadata', 'created_by', 'anonymity_level', 'source', 'fulfillments_wanted', 'created_at'],
-        fulfillments: ['id', 'need_id', 'title', 'description', 'tags', 'metadata', 'created_by', 'anonymity_level', 'source', 'created_at']
+        fulfillments: ['id', 'need_id', 'references_id', 'title', 'description', 'status (offering|in_progress|completed|withdrawn)', 'tags', 'metadata', 'created_by', 'anonymity_level', 'source', 'created_at']
       },
       notes: [
         'All fields except title are optional',
         'metadata is free-form JSONB — add any fields you want',
         'Flagged entries are hidden by default',
         'No auth required for MVP — this is intentional',
-        'Bulk upload accepts array of needs, max 1000 per request'
+        'Bulk upload accepts array of needs, max 1000 per request',
+        'Fulfillments have a status field: offering → in_progress → completed (or withdrawn)',
+        'Fulfillments can chain via references_id — post updates or proof referencing a prior fulfillment',
+        'To prove a fulfillment happened, post a new fulfillment with status "completed" and include proof in metadata (e.g. metadata.proof_url, metadata.receipt, metadata.photo)'
       ]
     }
   });
@@ -324,7 +327,7 @@ app.post('/api/needs/bulk', bulkLimiter, async (req, res) => {
 
 app.post('/api/fulfillments', writeLimiter, async (req, res) => {
   try {
-    const { need_id, title, description, tags, metadata, created_by, anonymity_level, source } = req.body;
+    const { need_id, references_id, title, description, status, tags, metadata, created_by, anonymity_level, source } = req.body;
 
     if (!need_id) {
       return respond(res, 400, { success: false, error: 'need_id is required' });
@@ -348,14 +351,19 @@ app.post('/api/fulfillments', writeLimiter, async (req, res) => {
     const flagged = shouldFlag(title) || shouldFlag(description);
     const reviewStatus = flagged ? 'pending' : 'ok';
 
+    const validStatuses = ['offering', 'in_progress', 'completed', 'withdrawn'];
+    const fulfillStatus = validStatuses.includes(status) ? status : 'offering';
+
     const result = await pool.query(
-      `INSERT INTO fulfillments (need_id, title, description, tags, metadata, created_by, anonymity_level, source, flagged, review_status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO fulfillments (need_id, references_id, title, description, status, tags, metadata, created_by, anonymity_level, source, flagged, review_status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         need_id,
+        references_id || null,
         title.trim(),
         description || null,
+        fulfillStatus,
         tags || [],
         metadata || {},
         created_by || null,

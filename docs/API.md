@@ -210,22 +210,47 @@ Post a fulfillment for an existing need. Requires `need_id`.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | need_id | UUID | Yes | The need being fulfilled |
+| references_id | UUID | No | Chain to a prior fulfillment (for updates/proof) |
 | title | string | Yes | Max 500 chars |
 | description | string | No | Max 10,000 chars |
+| status | string | No | One of: offering, in_progress, completed, withdrawn. Default: "offering" |
 | tags | string[] | No | Array of tag strings |
-| metadata | object | No | Free-form JSONB |
+| metadata | object | No | Free-form JSONB — use for proof (proof_url, receipt, photo) |
 | created_by | string | No | Name or identifier |
 | anonymity_level | string | No | Default: "public" |
 | source | string | No | Where this came from |
 
+**How fulfillment status works:**
+
+Every action is a new post. Nothing gets overwritten. The chain of fulfillments IS the history.
+
+1. Post with `status: "offering"` — "I can help with this"
+2. Post with `status: "in_progress"` and `references_id` pointing to your offering — "I'm working on it"
+3. Post with `status: "completed"` and `references_id` pointing to your prior post — "Done. Here's proof."
+4. Include proof in `metadata`: `{ "proof_url": "...", "receipt": "...", "photo": "..." }`
+
 ```bash
+# Initial offer
 curl -X POST https://your-project.vercel.app/api/fulfillments \
   -H "Content-Type: application/json" \
   -d '{
     "need_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "title": "I can provide 50 sandwiches",
     "description": "Will deliver to the event location.",
+    "status": "offering",
     "created_by": "Local Deli"
+  }'
+
+# Mark completed with proof
+curl -X POST https://your-project.vercel.app/api/fulfillments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "need_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "references_id": "the-offering-fulfillment-id",
+    "title": "Delivered 50 sandwiches",
+    "status": "completed",
+    "created_by": "Local Deli",
+    "metadata": { "proof_url": "https://example.com/delivery-photo.jpg" }
   }'
 ```
 
@@ -357,10 +382,12 @@ curl -X DELETE https://your-project.vercel.app/api/admin/entry/a1b2c3d4-... \
 {
   "id": "UUID (auto-generated)",
   "need_id": "UUID (required, references needs.id)",
+  "references_id": "UUID (optional, references fulfillments.id — for chaining updates/proof)",
   "title": "string (required, max 500 chars)",
   "description": "string (max 10,000 chars)",
+  "status": "string (offering | in_progress | completed | withdrawn, default: offering)",
   "tags": ["string array"],
-  "metadata": { "free-form JSONB" },
+  "metadata": { "free-form JSONB — use for proof: proof_url, receipt, photo, etc." },
   "created_by": "string",
   "anonymity_level": "string (default: public)",
   "source": "string",
