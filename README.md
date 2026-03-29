@@ -15,22 +15,40 @@ git clone https://github.com/joshuakrafchin/need-ledger
 cd need-ledger
 npm install
 cp .env.example .env
-# Fill in DATABASE_URL in .env pointing to a PostgreSQL database
+# Fill in DATABASE_URL with your Supabase connection string
 psql $DATABASE_URL < schema.sql
 node server.js
 ```
 
 Visit `http://localhost:3000` to see the landing page, or `http://localhost:3000/api` for the API info endpoint.
 
-## Deploy to Render
+## Deploy to Vercel + Supabase
+
+### 1. Set up Supabase (database)
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Once the project is ready, go to **Settings > Database**
+3. Copy the **Connection string (URI)** — this is your `DATABASE_URL`
+4. Go to **SQL Editor** in the Supabase dashboard
+5. Paste the contents of `schema.sql` and click **Run** — this creates your tables and indexes
+
+### 2. Deploy to Vercel
 
 1. Push this repo to GitHub
-2. Go to [render.com](https://render.com), click **New > Blueprint**
-3. Connect your GitHub repo
-4. Render reads `render.yaml` and creates the web service + PostgreSQL database automatically
-5. Set `ADMIN_SECRET` in the Render environment variables dashboard
-6. Open the Render shell and run: `psql $DATABASE_URL < schema.sql`
-7. Visit your Render URL — it's live
+2. Go to [vercel.com](https://vercel.com), click **Add New > Project**
+3. Import your GitHub repo
+4. In the **Environment Variables** section, add:
+   - `DATABASE_URL` — your Supabase connection string
+   - `ADMIN_SECRET` — a long random string for admin access
+   - `NODE_ENV` — `production`
+5. Click **Deploy**
+6. Visit your Vercel URL — it's live
+
+### Notes
+
+- Supabase free tier: 500MB database, unlimited API requests
+- Vercel free tier: 100GB bandwidth, serverless functions included
+- Total cost: **$0**
 
 ## API Quick Reference
 

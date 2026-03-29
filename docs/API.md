@@ -1,6 +1,6 @@
 # Need Ledger API Documentation
 
-Base URL: `https://your-deployment-url.onrender.com`
+Base URL: `https://your-project.vercel.app`
 
 No authentication required for public endpoints. This is intentional — the Need Ledger is open by design.
 
@@ -35,7 +35,7 @@ After 50 requests in an hour, responses are slowed by 500ms per request.
 Returns API info, available endpoints, and field descriptions.
 
 ```bash
-curl https://your-url.onrender.com/api
+curl https://your-project.vercel.app/api
 ```
 
 ---
@@ -45,7 +45,7 @@ curl https://your-url.onrender.com/api
 Returns project status and entry counts.
 
 ```bash
-curl https://your-url.onrender.com/api/status
+curl https://your-project.vercel.app/api/status
 ```
 
 Response:
@@ -82,7 +82,7 @@ Create a new need.
 | fulfillments_wanted | string | No | Default: "unlimited" |
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/needs \
+curl -X POST https://your-project.vercel.app/api/needs \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Need 100 meals for community event",
@@ -133,13 +133,13 @@ List needs. Flagged entries are excluded by default.
 
 ```bash
 # Get latest 20 needs
-curl https://your-url.onrender.com/api/needs
+curl https://your-project.vercel.app/api/needs
 
 # Filter by tags
-curl "https://your-url.onrender.com/api/needs?tags=food,housing&limit=10"
+curl "https://your-project.vercel.app/api/needs?tags=food,housing&limit=10"
 
 # Filter by creator
-curl "https://your-url.onrender.com/api/needs?created_by=Jane%20Doe"
+curl "https://your-project.vercel.app/api/needs?created_by=Jane%20Doe"
 ```
 
 ---
@@ -149,7 +149,7 @@ curl "https://your-url.onrender.com/api/needs?created_by=Jane%20Doe"
 Get a single need with all its fulfillments.
 
 ```bash
-curl https://your-url.onrender.com/api/needs/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+curl https://your-project.vercel.app/api/needs/a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
 Response:
@@ -178,7 +178,7 @@ Response:
 Bulk upload up to 1000 needs in one request.
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/needs/bulk \
+curl -X POST https://your-project.vercel.app/api/needs/bulk \
   -H "Content-Type: application/json" \
   -d '[
     { "title": "Need winter coats", "tags": ["clothing", "winter"] },
@@ -219,7 +219,7 @@ Post a fulfillment for an existing need. Requires `need_id`.
 | source | string | No | Where this came from |
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/fulfillments \
+curl -X POST https://your-project.vercel.app/api/fulfillments \
   -H "Content-Type: application/json" \
   -d '{
     "need_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -237,10 +237,10 @@ List fulfillments. Optionally filter by need_id.
 
 ```bash
 # All fulfillments
-curl https://your-url.onrender.com/api/fulfillments
+curl https://your-project.vercel.app/api/fulfillments
 
 # For a specific need
-curl "https://your-url.onrender.com/api/fulfillments?need_id=a1b2c3d4-..."
+curl "https://your-project.vercel.app/api/fulfillments?need_id=a1b2c3d4-..."
 ```
 
 ---
@@ -257,13 +257,13 @@ Search across needs and fulfillments by text or tags.
 
 ```bash
 # Text search
-curl "https://your-url.onrender.com/api/search?q=housing"
+curl "https://your-project.vercel.app/api/search?q=housing"
 
 # Tag search
-curl "https://your-url.onrender.com/api/search?tags=food,urgent"
+curl "https://your-project.vercel.app/api/search?tags=food,urgent"
 
 # Combined
-curl "https://your-url.onrender.com/api/search?q=meals&tags=community"
+curl "https://your-project.vercel.app/api/search?q=meals&tags=community"
 ```
 
 Response:
@@ -284,7 +284,7 @@ Response:
 Report a harmful entry for review.
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/report/a1b2c3d4-... \
+curl -X POST https://your-project.vercel.app/api/report/a1b2c3d4-... \
   -H "Content-Type: application/json" \
   -d '{
     "type": "need",
@@ -303,7 +303,7 @@ All admin endpoints require the `X-Admin-Secret` header.
 List all flagged needs and fulfillments.
 
 ```bash
-curl https://your-url.onrender.com/api/admin/flagged \
+curl https://your-project.vercel.app/api/admin/flagged \
   -H "X-Admin-Secret: your-secret"
 ```
 
@@ -312,7 +312,7 @@ curl https://your-url.onrender.com/api/admin/flagged \
 Clear a flag on an entry.
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/admin/unflag/a1b2c3d4-... \
+curl -X POST https://your-project.vercel.app/api/admin/unflag/a1b2c3d4-... \
   -H "X-Admin-Secret: your-secret" \
   -H "Content-Type: application/json" \
   -d '{ "type": "need" }'
@@ -323,7 +323,7 @@ curl -X POST https://your-url.onrender.com/api/admin/unflag/a1b2c3d4-... \
 Hard delete an entry.
 
 ```bash
-curl -X DELETE https://your-url.onrender.com/api/admin/entry/a1b2c3d4-... \
+curl -X DELETE https://your-project.vercel.app/api/admin/entry/a1b2c3d4-... \
   -H "X-Admin-Secret: your-secret" \
   -H "Content-Type: application/json" \
   -d '{ "type": "need" }'

@@ -69,10 +69,10 @@ Use the search endpoint to find needs by keyword or tag:
 
 ```bash
 # Search by keyword
-curl "https://your-url.onrender.com/api/search?q=housing"
+curl "https://your-project.vercel.app/api/search?q=housing"
 
 # Search by tags
-curl "https://your-url.onrender.com/api/search?tags=food,urgent"
+curl "https://your-project.vercel.app/api/search?tags=food,urgent"
 ```
 
 Or browse the latest needs on the landing page.
@@ -82,7 +82,7 @@ Or browse the latest needs on the landing page.
 If you see a need you can help with, post a fulfillment:
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/fulfillments \
+curl -X POST https://your-project.vercel.app/api/fulfillments \
   -H "Content-Type: application/json" \
   -d '{
     "need_id": "the-need-uuid-here",
@@ -99,7 +99,7 @@ Or ask an AI assistant to do it for you using the same prompt pattern.
 Organizations with many needs can upload up to 1000 at once:
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/needs/bulk \
+curl -X POST https://your-project.vercel.app/api/needs/bulk \
   -H "Content-Type: application/json" \
   -d '[
     { "title": "Need 1", "tags": ["tag1"], "created_by": "Org Name" },
@@ -141,7 +141,7 @@ If you see content that is harmful, abusive, or inappropriate:
 2. Use the report endpoint:
 
 ```bash
-curl -X POST https://your-url.onrender.com/api/report/ENTRY_ID \
+curl -X POST https://your-project.vercel.app/api/report/ENTRY_ID \
   -H "Content-Type: application/json" \
   -d '{ "type": "need", "reason": "Description of the problem" }'
 ```

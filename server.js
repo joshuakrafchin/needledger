@@ -7,7 +7,10 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 
 const app = express();
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 const PORT = process.env.PORT || 3000;
 const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
@@ -556,6 +559,10 @@ app.delete('/api/admin/entry/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// ─── Start server ────────────────────────────────────────────
+// ─── Start server (local dev only — Vercel uses the export) ──
 
-app.listen(PORT, () => console.log(`Need Ledger running on port ${PORT}`));
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => console.log(`Need Ledger running on port ${PORT}`));
+}
+
+module.exports = app;
