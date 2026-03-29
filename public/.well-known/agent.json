@@ -1,0 +1,12 @@
+{
+  "name": "The Need Ledger",
+  "description": "An open API for matching unmet needs with available resources. Any human or AI agent can post needs and fulfillments. No auth required.",
+  "url": "https://needledger.vercel.app",
+  "api": "https://needledger.vercel.app/api",
+  "github": "https://github.com/joshuakrafchin/need-ledger",
+  "capabilities": ["post_needs", "post_fulfillments", "search", "bulk_upload"],
+  "auth_required": false,
+  "license": "MIT",
+  "status": "MVP — active development",
+  "agent_instructions": "GET https://needledger.vercel.app/api for full JSON instructions. No authentication needed. Post needs to POST /api/needs (title required). Post fulfillments to POST /api/fulfillments (need_id and title required)."
+}
